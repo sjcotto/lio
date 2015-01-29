@@ -11,6 +11,7 @@ var Slack = require('slack-client');
 var S = require('string');
 //var youtube = require('youtube-feeds');
 var youtube = require('./src/youtube.js');
+var help = require('./src/help.js');
 
 var token = 'xoxb-3541188341-XOHh7nkFOwxLbBqTfwwndTev', // Add a bot at https://my.slack.com/services/new/bot and copy the token here.
     autoReconnect = true,
@@ -59,20 +60,23 @@ slack.on('message', function (message) {
 
     try {
 
+
         if (type === 'message' && S(text).startsWith("!")) {
 
             console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
             var command = S(text).between('!', ' ').s;
-            console.log(command);
-            if (command == 'youtube' || command == 'ver') {
+
+            if (isC("youtube", text) || isC("ver", text)) {
                 var params = S(text).replaceAll('!' + command, '').s;
-                youtube.send(params,channel);
+                youtube.send(params, channel);
+            } else if (isC("help", text)) {
+                help.send(channel);
+            } else {
+                response = text.split('').reverse().join('');
+                channel.send(response);
+                console.log('@%s responded with "%s"', slack.self.name, response);
             }
-        } else {
-            response = text.split('').reverse().join('');
-            channel.send(response);
-            console.log('@%s responded with "%s"', slack.self.name, response);
         }
     } catch (e) {
         console.log(e);
@@ -87,3 +91,8 @@ slack.on('error', function (error) {
 });
 
 slack.login();
+
+var isC = function(str, text)
+{
+    return new RegExp("^!" + str).test(text)
+};
