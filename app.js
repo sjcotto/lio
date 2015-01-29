@@ -9,8 +9,8 @@
 
 var Slack = require('slack-client');
 var S = require('string');
-var youtube = require('youtube-feeds');
-
+//var youtube = require('youtube-feeds');
+var youtube = require('./src/youtube.js');
 
 var token = 'xoxb-3541188341-XOHh7nkFOwxLbBqTfwwndTev', // Add a bot at https://my.slack.com/services/new/bot and copy the token here.
     autoReconnect = true,
@@ -67,21 +67,9 @@ slack.on('message', function (message) {
             console.log(command);
             if (command == 'youtube' || command == 'ver') {
                 var params = S(text).replaceAll('!' + command, '').s;
-
-                youtube.feeds.videos({q: params}, function (err, data) {
-                    if (err instanceof Error) {
-                        console.log(err)
-                    } else {
-                        var r = Math.floor(Math.random() * data.items.length);
-                        var url = data.items[r].player.default;
-                        response = url;
-                        channel.send(url);
-                        console.log('@%s responded with "%s"', slack.self.name, response);
-                    }
-                });
+                youtube.send(params,channel);
             }
         } else {
-            // Respond to messages with the reverse of the text received.
             response = text.split('').reverse().join('');
             channel.send(response);
             console.log('@%s responded with "%s"', slack.self.name, response);
