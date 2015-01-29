@@ -1,15 +1,5 @@
-// This is a simple example of how to use the slack-client module. It creates a
-// bot that responds to all messages in all channels it is in with a reversed
-// string of the text received.
-//
-// To run, copy your token below, then:
-//	npm install
-// 	cd examples
-// 	node simple.js
-
 var Slack = require('slack-client');
 var S = require('string');
-//var youtube = require('youtube-feeds');
 var youtube = require('./src/youtube.js');
 var help = require('./src/help.js');
 
@@ -52,36 +42,23 @@ slack.on('message', function (message) {
         time = message.ts,
         text = message.text,
         response = '';
+    
+    if (type === 'message' && text && isC("", text)) {
 
+        console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
-    /*
-     youtube api
-     */
+        var command = S(text).between('!', ' ').s;
 
-    try {
-
-
-        if (type === 'message' && S(text).startsWith("!")) {
-
-            console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
-
-            var command = S(text).between('!', ' ').s;
-
-            if (isC("youtube", text) || isC("ver", text)) {
-                var params = S(text).replaceAll('!' + command, '').s;
-                youtube.send(params, channel);
-            } else if (isC("help", text)) {
-                help.send(channel);
-            } else {
-                response = text.split('').reverse().join('');
-                channel.send(response);
-                console.log('@%s responded with "%s"', slack.self.name, response);
-            }
+        if (isC("youtube", text) || isC("ver", text)) {
+            var params = S(text).replaceAll('!' + command, '').s;
+            youtube.send(params, channel);
+        } else if (isC("help", text)) {
+            help.send(channel);
+        } else {
+            response = text.split('').reverse().join('');
+            channel.send(response);
         }
-    } catch (e) {
-        console.log(e);
     }
-
 
 });
 
@@ -92,7 +69,6 @@ slack.on('error', function (error) {
 
 slack.login();
 
-var isC = function(str, text)
-{
+var isC = function (str, text) {
     return new RegExp("^!" + str).test(text)
 };
