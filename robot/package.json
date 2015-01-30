@@ -20,7 +20,11 @@
     "hubot-slack": "^3.2.1",
     "hubot-youtube": "^0.1.2",
     "mongodb": "^1.4.29",
-    "soupselect": "^0.2.0"
+    "node.io": "^0.5.1",
+    "soupselect": "^0.2.0",
+    "express"    : "latest",
+    "request"    : "latest",
+    "cheerio"    : "latest"
   },
   "engines": {
     "node": "0.10.x"
