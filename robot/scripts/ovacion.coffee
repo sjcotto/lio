@@ -30,6 +30,8 @@ module.exports = (robot) ->
           data = $(this)
           text = data.children().first().text()
 
+          img = ""
           s = data.children().first().html()
-          img = s.split('<img src="')[1].split('"')[0];
+          if (s.indexOf("<img src")>-1)
+            img = s.split('<img src="')[1].split('"')[0];
           msg.send text + "http://www.ovaciondigital.com.uy/" + img + "?flag" + new Date().getTime()
